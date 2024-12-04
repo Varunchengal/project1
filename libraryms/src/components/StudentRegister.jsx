@@ -8,6 +8,8 @@ import Form from 'react-bootstrap/Form';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import './main.css'
+import { addUser } from '../services/allApis';
+import { toast } from 'react-toastify';
 
 export default function StudentRegister() {
 
@@ -81,6 +83,35 @@ if(name==='name'){
   }
 }
       }
+
+
+
+const regClicked=async(e)=>{
+  e.preventDefault()
+
+const users=new FormData()
+users.append("name",reg.name)
+users.append("gender",reg.gender)
+users.append("age",reg.age)
+users.append("address",reg.address)
+users.append("email",reg.email)
+users.append("password",reg.password)
+users.append("profile",reg.profile)
+
+const header={
+  'Content-Type':'multipart/form-data'
+}
+
+const result=await addUser(users,header)
+console.log(result)
+
+if(result.status==200){
+  toast.success("Registration Successfully..")
+}else{
+  toast.error("Registration Failed...")
+}
+}
+      console.log(reg)
   return (
     <div className='reg-s-align'> 
         <div className='reg-student'>
@@ -97,9 +128,9 @@ if(name==='name'){
         // defaultValue="female"
         name="radio-buttons-group"
       >
-        <FormControlLabel value="female" control={<Radio />} label="Female" onChange={(e)=>handlerReg(e)}/>
-        <FormControlLabel value="male" control={<Radio />} label="Male" onChange={(e)=>handlerReg(e)} />
-        <FormControlLabel value="other" control={<Radio />} label="Other" onChange={(e)=>handlerReg(e)} />
+        <FormControlLabel value="female" control={<Radio />} label="Female" name="gender" onChange={(e)=>handlerReg(e)}/>
+        <FormControlLabel value="male" control={<Radio />} label="Male" name="gender" onChange={(e)=>handlerReg(e)} />
+        <FormControlLabel value="other" control={<Radio />} label="Other" name="gender" onChange={(e)=>handlerReg(e)} />
       </RadioGroup>
       {
               !valGen && <p className='error'>Enter valid gender</p>
@@ -136,11 +167,11 @@ if(name==='name'){
   <VisuallyHiddenInput
     type="file"
     // onChange={(event) => console.log(event.target.files)}
-    onChange={(e)=>handlerReg(e)}
+    onChange={(e)=>setReg({...reg,profile:e.target.files[0]})}
     multiple
   />
 </Button> <br />
-        <Button variant="contained">Register</Button>
+        <Button variant="contained" onClick={(e)=>regClicked(e)}>Register</Button>
       </Form.Group>
             </Form>
         </div>
